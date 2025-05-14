@@ -23,20 +23,28 @@ namespace OpenTKSVG
             var pathDataList = new List<string>();
             foreach (var pathElement in pathElements)
             {
+
+                var stroke = pathElement.GetAttribute("stroke");
+                var strokeWidth = pathElement.GetAttribute("stroke-width");
                 var dAttribute = pathElement.GetAttribute("d");
                 if (!string.IsNullOrEmpty(dAttribute))
                 {
                     pathDataList.Add(dAttribute);
-                    DrawPath(canvas, dAttribute);
+                    DrawPath(canvas, dAttribute, stroke, strokeWidth);
                 }
             }
         }
 
-        public static void DrawPath(Canvas canvas, string pathData)
+        public static void DrawPath(Canvas canvas, string pathData, string stroke, string strokeWidth)
         {
             canvas.BeginPath();
 
-            //Console.WriteLine(pathData);
+            if(!string.IsNullOrEmpty(stroke))
+            {
+                
+            }
+
+            //Console.WriteLine(pathData+" "+stroke+" "+strokeWidth);
 
             var commandList = new List<string>();
             if (!string.IsNullOrEmpty(pathData))
