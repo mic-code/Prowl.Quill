@@ -34,7 +34,8 @@ namespace OpenTKSVG
             _height = height;
             _canvas3D = new Canvas3D(canvas, width, height);
 
-            svgData = File.ReadAllText("../../../svg/mlc.svg");
+            //svgData = File.ReadAllText("../../../svg/mlc.svg");
+            svgData = File.ReadAllText("../../../svg/bezier.svg");
         }
 
         /// <summary>

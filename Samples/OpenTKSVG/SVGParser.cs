@@ -8,6 +8,7 @@ using AngleSharp.Dom;
 using AngleSharp.Html.Parser;
 using AngleSharp.Svg.Dom;
 using Prowl.Quill;
+using System.Globalization;
 
 namespace OpenTKSVG
 {
@@ -26,16 +27,16 @@ namespace OpenTKSVG
                 if (!string.IsNullOrEmpty(dAttribute))
                 {
                     pathDataList.Add(dAttribute);
-                    Draw(canvas, dAttribute);
+                    DrawPath(canvas, dAttribute);
                 }
             }
         }
 
-        public static void Draw(Canvas canvas, string pathData)
+        public static void DrawPath(Canvas canvas, string pathData)
         {
             canvas.BeginPath();
 
-            Console.WriteLine(pathData);
+            //Console.WriteLine(pathData);
 
             var commandList = new List<string>();
             if (!string.IsNullOrEmpty(pathData))
@@ -47,25 +48,64 @@ namespace OpenTKSVG
                 }
             }
 
+            var lastMoveTo = new List<double>();
+            var currentPoint = new List<double>();
+
             // At this point, commandList contains strings like "M150 5", "L75 200", "L225 200", "Z"
             foreach (var commandSegment in commandList)
             {
                 var command = commandSegment[0];
+                var parametersString = commandSegment.Length > 1 ? commandSegment.Substring(1).Trim() : "";
+                var coordinates = new List<double>();
 
-                switch(command)
+                if (!string.IsNullOrEmpty(parametersString))
                 {
+                    var parts = parametersString.Split([' ', ','], StringSplitOptions.RemoveEmptyEntries);
+                    foreach (var part in parts)
+                    {
+                        if (double.TryParse(part, NumberStyles.Any, CultureInfo.InvariantCulture, out double coord))
+                        {
+                            coordinates.Add(coord);
+                            //Console.WriteLine(coord);
+                        }
+                        else
+                        {
+                            // Handle parsing error, e.g., log or throw
+                            Console.WriteLine($"Warning: Could not parse coordinate '{part}' in command '{commandSegment}'");
+                        }
+                    }
+                }
+
+                switch (command)
+                {
+                    case 'm':
                     case 'M':
-                        //canvas.MoveTo()
+                        lastMoveTo.Clear();
+                        lastMoveTo.AddRange(coordinates);
+                        canvas.MoveTo(coordinates[0], coordinates[1]);
+                        currentPoint.Clear();
+                        currentPoint.AddRange(coordinates);
+                        break;
+                    case 'l':
+                        canvas.LineTo(currentPoint[0] + coordinates[0], currentPoint[1] + coordinates[1]);
                         break;
                     case 'L':
-                        //canvas.MoveTo()
+                        canvas.LineTo(coordinates[0], coordinates[1]);
                         break;
+                    case 'q':
+                        canvas.QuadraticCurveTo(currentPoint[0] + coordinates[0], currentPoint[1] + coordinates[1], currentPoint[0] + coordinates[2], currentPoint[1] + coordinates[3]);
+                        break;
+                    case 'Q':
+                        canvas.QuadraticCurveTo(coordinates[0], coordinates[1], coordinates[2], coordinates[3]);
+                        break;
+                    case 'z':
                     case 'Z':
-                        //canvas.MoveTo()
+                        canvas.ClosePath();
                         break;
                 }
-                Console.WriteLine($"Command segment: {commandSegment}");
+                //Console.WriteLine($"Command segment: {commandSegment}");
             }
+            canvas.Stroke();
         }
     }
 }
