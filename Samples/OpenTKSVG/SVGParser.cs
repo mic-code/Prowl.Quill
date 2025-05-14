@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using AngleSharp.Dom;
 using AngleSharp.Html.Parser;
+using AngleSharp.Svg.Dom;
 
 namespace OpenTKSVG
 {
@@ -14,7 +15,7 @@ namespace OpenTKSVG
         {
             var parser = new HtmlParser();
             var document = parser.ParseDocument(svg);
-            var pathElements = document.QuerySelectorAll("path").ToList();
+            var pathElements = document.QuerySelectorAll<ISvgElement>("path").ToList();
 
             var pathDataList = new List<string>();
             foreach (var pathElement in pathElements)
