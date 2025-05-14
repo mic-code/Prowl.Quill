@@ -25,6 +25,7 @@ namespace OpenTKSVG
         private double _currentFps = 0;
         private const double FPS_UPDATE_INTERVAL = 0.5; // Update FPS display every half second
 
+        string svgData;
 
         public SVGDemo(Canvas canvas, double width, double height)
         {
@@ -32,6 +33,8 @@ namespace OpenTKSVG
             _width = width;
             _height = height;
             _canvas3D = new Canvas3D(canvas, width, height);
+
+            svgData = File.ReadAllText("../../../svg/mlc.svg");
         }
 
         /// <summary>
@@ -93,9 +96,14 @@ namespace OpenTKSVG
             _canvas.SaveState();
 
             DrawGrid(16, 17, 50, Color.FromArgb(40, 255, 255, 255));
-
+            DrawSVG();
             // Restore the canvas state
             _canvas.RestoreState();
+        }
+
+        void DrawSVG()
+        {
+            SVGParser.ParseAndDraw(_canvas, svgData);
         }
 
         private void DrawGrid(int x, int y, double cellSize, Color color)

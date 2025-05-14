@@ -6,12 +6,13 @@ using System.Threading.Tasks;
 using AngleSharp.Dom;
 using AngleSharp.Html.Parser;
 using AngleSharp.Svg.Dom;
+using Prowl.Quill;
 
 namespace OpenTKSVG
 {
     class SVGParser
     {
-        public static List<string> Parse(string svg)
+        public static List<string> ParseAndDraw(Canvas canvas, string svg)
         {
             var parser = new HtmlParser();
             var document = parser.ParseDocument(svg);
@@ -27,6 +28,11 @@ namespace OpenTKSVG
                 }
             }
             return pathDataList;
+        }
+
+        public static void Draw(Canvas canvas, string pathData)
+        {
+            canvas.BeginPath();
         }
     }
 }

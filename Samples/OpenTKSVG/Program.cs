@@ -12,23 +12,6 @@ namespace OpenTKExample
     {
         public static void Main(string[] args)
         {
-            //var svgData = File.ReadAllText("../../../svg/path.svg");
-            var svgData = File.ReadAllText("../../../svg/mlc.svg");
-
-            //Console.WriteLine(svgData);
-
-            var paths = SVGParser.Parse(svgData);
-
-
-            for (int i = 0; i < paths.Count; i++)
-            {
-
-                Console.WriteLine(paths[i]);
-            }
-
-
-            return;
-
             // Create window with appropriate settings
             var nativeWindowSettings = new NativeWindowSettings
             {
