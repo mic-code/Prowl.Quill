@@ -9,6 +9,7 @@ using AngleSharp.Html.Parser;
 using AngleSharp.Svg.Dom;
 using Prowl.Quill;
 using System.Globalization;
+using System.Drawing; // Added for System.Drawing.Color and ColorTranslator
 
 namespace OpenTKSVG
 {
@@ -39,9 +40,32 @@ namespace OpenTKSVG
         {
             canvas.BeginPath();
 
-            if(!string.IsNullOrEmpty(stroke))
+            if (!string.IsNullOrEmpty(stroke))
             {
-                
+                Color sysColor;
+                if (stroke.Equals("none", StringComparison.OrdinalIgnoreCase))
+                {
+                    sysColor = Color.FromArgb(0, 0, 0, 0); // Fully transparent
+                }
+                else
+                {
+                    try
+                    {
+                        sysColor = ColorTranslator.FromHtml(stroke);
+                    }
+                    catch (Exception)
+                    {
+                        Console.WriteLine($"Warning: Invalid stroke color string '{stroke}'. Defaulting to black.");
+                        sysColor = System.Drawing.Color.Black;
+                    }
+                }
+
+                canvas.SetStrokeColor(sysColor);
+            }
+
+            if (!string.IsNullOrEmpty(strokeWidth) && double.TryParse(strokeWidth, out var strokeWidthValue))
+            {
+                canvas.SetStrokeWidth(strokeWidthValue);
             }
 
             //Console.WriteLine(pathData+" "+stroke+" "+strokeWidth);
